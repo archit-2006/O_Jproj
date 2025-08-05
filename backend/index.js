@@ -3,6 +3,13 @@ const app = express();
 const { DBConnection } = require("./database/db");
 const authRoutes = require("./routes/auth.route");
 const middlewareError = require('./middleware/middlewareError');
+const cors = require('cors');
+
+app.use(cors({
+  origin: 'http://localhost:5173', // Vite dev server
+  credentials: true               // if sending cookies/token
+}));
+
 require("dotenv").config();
 DBConnection();
 
