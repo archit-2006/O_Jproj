@@ -29,13 +29,13 @@ exports.registerUser = async (req, res) => {
     });
 
     const token = jwt.sign(
-      { id: user._id, email },
+      { id: user._id, email,role: user.role },
       process.env.SECRET_KEY,
       {
         expiresIn: "1h",
       }
     );
-
+    res.json({ token });
     user.token = token;
     user.password = undefined;
 
@@ -68,17 +68,17 @@ exports.validateUser = async (req, res,next) => {
     
 
     const token = jwt.sign(
-      { id: validUser._id, email },
+      { id: validUser._id, email ,role: validUser.role},
       process.env.SECRET_KEY,
       {
         expiresIn: "1h",
       }
     );
-
+    
     validUser.token = token;
     validUser.password = undefined;
     
-    res.status(200).json({ message: "You have successfully logged in!", validUser });
+    res.status(200).json({ message: "You have successfully logged in!",token, validUser });
   } catch (error) {
     console.log(error);
     res.status(500).send("Something went wrong");
