@@ -1,24 +1,29 @@
 const express = require("express");
+const  cors  = require("cors");
 const { generateFile } = require("./generateCodeFile");
-const { executeFile } = require("./executeCpp");
+const { generateInputFile } = require("./generateInputFile");
+const { executeCpp } = require("./executeCpp");
 require("dotenv").config();
 const app = express()
-
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.post("/run", async (req,res) => {
-    const { language = 'cpp', code } = req.body;
+    const { language = 'cpp', code, input } = req.body;
     if( code=== undefined ){
         return res.status(404).json({ success: false, error: "Empty code" });
     }
     try{
-        const filePath = generateFile(language, code);
-        const output = await executeCpp(filePath);
-        return req.json({ output });
+        const filePath = await generateFile(language, code);
+        const inputFilePath = await generateInputFile(input);
+        const output = await executeCpp(filePath,inputFilePath);
+        return res.json({ filePath,output ,inputFilePath});
     }
     catch(error){
-        res.status(500).json({ error: error });
+        // console.error("Execution error:", error);
+        // res.status(500).json({ error: error });
+        return res.json({error: error.message || "Unknown error"});
     }
 });
 

@@ -1,5 +1,5 @@
 const {exec} = require("child_process");
-const fs =require("fs");
+const fs = require("fs");
 const path = require("path");
 
 const outputPath = path.join(__dirname,'outputs')
@@ -8,11 +8,11 @@ if(!fs.existsSync(outputPath)){
     fs.mkdirSync(outputPath, { recursive : true });
 }
 
-const executeCpp = (filepath) => {
+const executeCpp = (filepath,inputFilePath) => {
     const jobID= path.basename(filepath).split('.')[0];
-    const outPath= path.join(outputPath,`${jobID}.out`);
+    const outPath= path.join(outputPath,`${jobID}.exe`);
     return new Promise((resolve , reject)=>{
-        exec(`g++ ${filepath} -o ${outPath} && cd ${outputPath} && ./${jobID}`, (error,stdout,stderr)=>{
+        exec(`g++ ${filepath} -o ${outPath} && cd ${outputPath} && ${jobID}.exe <"${inputFilePath}"`, (error,stdout,stderr)=>{
             if(error){
                 reject({ error, stderr});
             }
@@ -21,7 +21,10 @@ const executeCpp = (filepath) => {
             }
             resolve(stdout);
         });
-
+        // if (input) {
+        //     child.stdin.write(input);
+        //     child.stdin.end();
+        // }
     });
 };
 
