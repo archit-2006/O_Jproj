@@ -1,9 +1,24 @@
 // src/components/CodeEditor.jsx
-export default function CodeEditor() {
+import { useState } from "react";
+import Editor from "@monaco-editor/react";
+
+export default function CodeEditor({ code, setCode }) {
+  
+
   return (
-    <textarea
-      className="border rounded p-3 w-full h-64 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
-      placeholder="// Write your code here..."
-    ></textarea>
+    <div className="w-full">
+      <Editor
+        height="70vh"
+        theme="vs-dark"               // VS Code dark theme
+        defaultLanguage="cpp"         // Highlighting for C++
+        value={code}                  // Controlled value
+        onChange={(value) => setCode(value || "")}
+        options={{
+          fontSize: 14,
+          minimap: { enabled: true }, // Mini map like VS Code
+          automaticLayout: true,      // Responsive resizing
+        }}
+      />
+    </div>
   );
 }

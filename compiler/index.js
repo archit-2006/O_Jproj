@@ -11,6 +11,8 @@ app.use(express.json());
 
 app.post("/run", async (req,res) => {
     const { language = 'cpp', code, input } = req.body;
+      console.log("📩 Received in /run:", { language, code, input }); // 👈 Debug log
+
     if( code=== undefined ){
         return res.status(404).json({ success: false, error: "Empty code" });
     }
