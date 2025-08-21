@@ -2,7 +2,7 @@ const express = require("express");
 const  cors  = require("cors");
 const { generateFile } = require("./generateCodeFile");
 const { generateInputFile } = require("./generateInputFile");
-const { executeCpp } = require("./executeCpp");
+const { executeCpp } = require("./executors/executeCpp");
 require("dotenv").config();
 const app = express()
 app.use(cors());

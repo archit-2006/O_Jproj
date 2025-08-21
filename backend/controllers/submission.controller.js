@@ -10,26 +10,49 @@ const submitCode = async (req, res) => {
     const problem = await Problem.findById(id);
     if (!problem) return res.status(404).json({ error: "Problem not found" });
 
+    // ---------- Helper to Run One Test ----------
+    const runTest = async (input) => {
+      try {
+        const response = await axios.post("http://localhost:4000/run", {
+          language,
+          code,
+          input,
+        });
+        return { output: response.data.output?.trim(), error: null };
+      } catch (err) {
+        if (err.response?.data?.error?.includes("Compilation")) {
+          return { output: null, error: "CE" }; // Compilation Error
+        } else if (err.code === "ECONNABORTED") {
+          return { output: null, error: "TLE" }; // Timeout
+        } else {
+          return { output: null, error: "RE" }; // Runtime Error
+        }
+      }
+    };
+
     // -------- Step 1: Run Sample Test Cases --------
     for (let i = 0; i < problem.sampleTestCases.length; i++) {
       const tc = problem.sampleTestCases[i];
 
-      const response = await axios.post("http://localhost:4000/run", {
-        language,
-        code,
-        input: tc.input,
-      });
+      const { output, error } = await runTest(tc.input);
 
-      const output = response.data.output;
-
-      if (output.trim() !== tc.output.trim()) {
+      if (error) {
         return res.json({
           status: "failed",
+          verdict: error,
+          stage: "sample",
+          testcase: i + 1,
+        });
+      }
+
+      if (output !== tc.output.trim()) {
+        return res.json({
+          status: "failed",
+          verdict: "WA",
           stage: "sample",
           testcase: i + 1,
           expected: tc.output,
           got: output,
-          message: `Wrong Answer on Sample Test Case ${i + 1}`,
         });
       }
     }
@@ -38,22 +61,24 @@ const submitCode = async (req, res) => {
     for (let i = 0; i < problem.judgeTestCases.length; i++) {
       const tc = problem.judgeTestCases[i];
 
-      const response = await axios.post("http://localhost:4000/run", {
-        language,
-        code,
-        input: tc.input,
-      });
+      const { output, error } = await runTest(tc.input);
 
-      const output = response.data.output;
-
-      if (output.trim() !== tc.output.trim()) {
+      if (error) {
         return res.json({
           status: "failed",
+          verdict: error,
           stage: "judge",
           testcase: i + 1,
-          expected: tc.output,
-          got: output,
-          message: `Wrong Answer on Judge Test Case ${i + 1}`,
+        });
+      }
+
+      if (output !== tc.output.trim()) {
+        return res.json({
+          status: "failed",
+          verdict: "WA",
+          stage: "judge",
+          testcase: i + 1,
+          
         });
       }
     }
@@ -61,12 +86,14 @@ const submitCode = async (req, res) => {
     // ✅ All passed
     return res.json({
       status: "success",
-      message: "Code Submitted Successfully 🎉",
+      verdict: "AC",
+      message: "All test cases passed 🎉",
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Error while submitting code" });
+    res.status(500).json({ error: "Server Error while submitting code" });
   }
 };
 
 module.exports = { submitCode };
+

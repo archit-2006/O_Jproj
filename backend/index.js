@@ -5,6 +5,8 @@ const authRoutes = require("./routes/auth.route");
 const problemRoutes = require('./routes/problem.route');
 const middlewareError = require('./middleware/middlewareError');
 const submissionRoutes = require("./routes/submission.route");
+const runRoutes = require("./routes/run.route");
+
 const cors = require('cors');
 
 require("dotenv").config();
@@ -27,7 +29,9 @@ app.get("/", (req, res) => {
 
 app.use('/api/problems', problemRoutes);
 
-app.use("/api/submissions", submissionRoutes);
+app.use("/api", runRoutes);
+
+app.use("/api", submissionRoutes);
 
 
 // Start server
