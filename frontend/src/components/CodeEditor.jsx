@@ -17,6 +17,7 @@ export default function CodeEditor({ code, setCode }) {
           fontSize: 14,
           minimap: { enabled: true }, // Mini map like VS Code
           automaticLayout: true,      // Responsive resizing
+          padding : {top:10},
         }}
       />
     </div>

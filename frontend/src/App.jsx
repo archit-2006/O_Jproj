@@ -7,6 +7,7 @@ import ProblemPage from "./Pages/Problem";
 import Navbar from "./components/Navbar";
 import CreateProblem from "./Pages/CreateProblem";
 import EditProblem from "./Pages/EditProblem";
+import SubmissionsPage from "./Pages/SubmissionPage";
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/problem" element={<ProblemList />} />
+          <Route path="/submission/:userId" element={<SubmissionsPage />} />
           <Route path="/problems/:id" element={<ProblemPage />} />
           <Route path="/problems/create" element={<CreateProblem />} />
           <Route path="/problems/edit/:id" element={<EditProblem />} />

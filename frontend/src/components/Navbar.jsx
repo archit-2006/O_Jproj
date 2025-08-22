@@ -18,6 +18,7 @@ function Navbar() {
       <div>
         <Link to="/" style={linkStyle}>Home</Link>
         <Link to="/problem" style={linkStyle}>Problems</Link>
+        <Link to="/submission/:userId" style={linkStyle}>Submissions</Link>
         <Link to="/login" style={linkStyle}>Login</Link>
         <Link to="/register" style={linkStyle}>Register</Link>
       </div>
