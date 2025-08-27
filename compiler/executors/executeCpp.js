@@ -21,10 +21,7 @@ const executeCpp = (filepath,inputFilePath) => {
             }
             resolve(stdout);
         });
-        // if (input) {
-        //     child.stdin.write(input);
-        //     child.stdin.end();
-        // }
+       
     });
 };
 

@@ -1,83 +1,3 @@
-// const axios = require("axios");
-// const Problem = require("../models/Problem");
-
-// // POST /api/run/:id
-// const runCode = async (req, res) => {
-//   try {
-//     // const { id } = req.params;
-//     const { code, language, id, useCustomInput, input } = req.body;
-
-//     // fetch problem
-//     const problem = await Problem.findById(id);
-//     if (!problem) return res.status(404).json({ error: "Problem not found" });
-
-//     // helper to send code to compiler server
-//     const execute = async (testInput) => {
-//       try {
-//         const response = await axios.post("http://localhost:4000/run", {
-//           code,
-//           language,
-//           input: testInput,
-//         });
-//         return { output: response.data.output?.trim(), error: null };
-//       } catch (err) {
-//         if (err.response?.data?.error?.includes("Compilation")) {
-//           return { output: null, error: "Compilation Error" };
-//         } else if (err.code === "ECONNABORTED") {
-//           return { output: null, error: "TLE" };
-//         } else {
-//           return { output: null, error: "Runtime Error" };
-//         }
-//       }
-//     };
-
-//     if (useCustomInput) {
-//       // Run only with custom input
-//       const { output, error } = await execute(input);
-//       return res.json({
-//         stage: "custom",
-//         output: error ? null : output,
-//         error, // keep error explicitly
-//       });
-//     }
-//     else {
-//       // Run with **sample test cases only**
-//       for (let i = 0; i < problem.sampleTestCases.length; i++) {
-//         const tc = problem.sampleTestCases[i];
-//         const { output, error } = await execute(tc.input);
-
-//         if (error) {
-//           return res.json({
-//             status: "failed",
-//             verdict: error,
-//             testcase: i + 1,
-//           });
-//         }
-
-//         if (output !== tc.output.trim()) {
-//           return res.json({
-//             status: "failed",
-//             verdict: "WA",
-//             testcase: i + 1,
-//             expected: tc.output,
-//             got: output,
-//           });
-//         }
-//       }
-
-//       return res.json({
-//         status: "success",
-//         verdict: "AC",
-//         message: "All sample test cases passed 🎉",
-//       });
-//     }
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: "Server error while running code" });
-//   }
-// };
-
-// module.exports = { runCode };
 
 const axios = require("axios");
 const Problem = require("../models/Problem");
@@ -127,7 +47,7 @@ const runCode = async (req, res) => {
         status: error ? "failed" : "success",
         verdict: error ? error : "OK",
         stage: "custom",
-        output: error ? null : output,
+        got : output,
         message: error ? "Execution failed" : "Executed successfully",
       });
     }

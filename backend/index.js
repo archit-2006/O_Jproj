@@ -6,6 +6,7 @@ const problemRoutes = require('./routes/problem.route');
 const middlewareError = require('./middleware/middlewareError');
 const submissionRoutes = require("./routes/submission.route");
 const runRoutes = require("./routes/run.route");
+const aiRoutes = require("./routes/ai.routes");
 
 const cors = require('cors');
 
@@ -33,6 +34,8 @@ app.use("/api", runRoutes);
 
 app.use("/api", submissionRoutes);
 
+app.use("/api/ai", aiRoutes);
+
 
 // Start server
 const PORT = process.env.PORT || 5000;
@@ -42,12 +45,3 @@ app.listen(PORT, () => {
 
 
 app.use(middlewareError);
-
-// const errorHandler = (err, req, res, next) => {
-//   console.error(err.stack);
-
-//   res.status(err.statusCode || 500).json({
-//     success: false,
-//     message: err.message || 'Internal Server Error',
-//   });
-// };

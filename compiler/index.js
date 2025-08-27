@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const { generateFile } = require("./generateCodeFile");
 const { generateInputFile } = require("./generateInputFile");
-
+const { generateAiReview } = require("./generateAiReview");
 // Import executors
 const { executeCpp } = require("./executors/executeCpp");
 const { executePython } = require("./executors/executePy");
@@ -42,6 +42,32 @@ app.post("/run", async (req, res) => {
   } catch (error) {
     console.error("Execution error:", error);
     return res.status(500).json({ error: error.stderr || error.error || error.message || "Unknown error" });
+  }
+});
+
+app.post("/ai-review",async (req,res)=>  {
+  const {problem,code,verdict,message} = req.body;
+
+  if(code === undefined || code.trim() === ''){
+    return res.status(400).json({
+
+      success : false,
+      error: "Empty code! Please provide some code to execute."
+    });
+  }
+  try{
+    const aiReview= await generateAiReview(problem,code,verdict,message);
+    res.status(200).json({
+      success: true,
+      message: aiReview 
+
+    });
+  } catch (error){
+    console.error("Error getting ai-review:", error.message);
+    return res.status(500).json({ 
+      success:false,
+      error:  error.message || error.toString() || "Error occured while executing ai-review" 
+    });
   }
 });
 
