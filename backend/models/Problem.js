@@ -21,6 +21,10 @@ const problemSchema = new mongoose.Schema({
     type: String,
     required: true
    },
+   tags:{
+    type: [String],
+    default: ["Miscellaneous"]
+   },
    difficulty: {
     type: String,
     required: true,

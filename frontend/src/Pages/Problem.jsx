@@ -40,6 +40,7 @@ public class Main {
   const [showAIReview, setShowAIReview] = useState(false);
   const [aiReviewOutput, setAiReviewOutput] = useState("");
   const [reviewLoading, setReviewLoading] = useState(false);
+  const [isFullScreenReview, setIsFullScreenReview] = useState(false);
 
 
   useEffect(() => {
@@ -115,6 +116,12 @@ public class Main {
 
   // Submit function
   const handleSubmit = async () => {
+    const token = localStorage.getItem("token");
+
+     if (!token) {
+    setOutput("⚠️ Please login to submit the problem.");
+    return; // stop here if not logged in
+  }
     setLoading(true); // ✅ START LOADING
 
     try {
@@ -268,18 +275,45 @@ public class Main {
         </div>
         {/* ✅ AI Review Output */}
         {showAIReview && (
-          <div className="bg-gray-900 text-purple-300 p-3 rounded h-48 overflow-auto font-mono mt-2">
-            {reviewLoading ? (
-              <span>🤖 Thinking...</span>
-            ) : (
-            <div className="whitespace-pre-wrap break-words font-mono">
-        <ReactMarkdown ReactMarkdown>
-            {aiReviewOutput || "🤖 Click 'AI Review' to get feedback."}
-          </ReactMarkdown>
+          <div className="relative mt-2">
+            <div
+              className={`${
+                isFullScreenReview
+                  ? "fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50"
+                  : ""
+              }`}
+            >
+              <div
+                className={`relative ${
+                  isFullScreenReview
+                    ? "w-3/4 h-3/4 bg-gray-900 p-6 rounded-xl shadow-2xl overflow-auto"
+                    : "bg-gray-900 p-4 rounded-lg h-48 overflow-auto shadow-md"
+                }`}
+              >
+                {/* Fullscreen Toggle Button */}
+                <button
+                  onClick={() => setIsFullScreenReview(!isFullScreenReview)}
+                  className="absolute top-2 right-2 px-2 py-1 text-sm rounded-md 
+                     bg-gray-700 text-white hover:bg-gray-600 transition"
+                >
+                  {isFullScreenReview ? "❌" : "⛶"}
+                </button>
+
+                {reviewLoading ? (
+                  <span className="text-purple-300">🤖 Thinking...</span>
+                ) : (
+                  <div className="whitespace-pre-wrap break-words font-mono text-purple-300 mt-6">
+                    <ReactMarkdown>
+                      {aiReviewOutput || "🤖 Click 'AI Review' to get feedback."}
+                    </ReactMarkdown>
+                  </div>
+                )}
+              </div>
             </div>
-             )}
           </div>
         )}
+
+
       </div>
     </div>
   );

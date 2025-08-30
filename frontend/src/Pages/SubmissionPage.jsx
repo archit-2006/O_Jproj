@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
@@ -8,32 +9,45 @@ export default function SubmissionsPage() {
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState(null);
+  const [isValidToken, setIsValidToken] = useState(true);
+
   const token = localStorage.getItem("token"); // saved at login
-  // useEffect(() => {
-  //   const token = localStorage.getItem("token");
-  //   setIsLoggedIn(!!token);
-  // }, []);
+  const navigate = useNavigate();
   let userId = null;
+
   if (token) {
-    const decoded = jwtDecode(token);
-    userId = decoded.id; // depends on what you encoded in token
+    try {
+      const decoded = jwtDecode(token);
+      userId = decoded.id; // depends on what you encoded in token
+    } catch (err) {
+      console.error("Invalid token:", err);
+      setIsValidToken(false);
+    }
   }
-  
+
   useEffect(() => {
+    if (!token) {
+      setIsValidToken(false);
+      setLoading(false);
+      return;
+    }
+
     const fetchSubmissions = async () => {
-
       try {
-        const res = await axios.get(`${API}/submissions/${userId}?limit=10`, { headers: { Authorization: `Bearer ${token}` } });
-
+        const res = await axios.get(`${API}/submissions/${userId}?limit=10`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setSubmissions(res.data);
       } catch (error) {
         console.error("Error fetching submissions:", error);
+        setIsValidToken(false); // treat error as invalid session
       } finally {
         setLoading(false);
       }
     };
+
     fetchSubmissions();
-  }, [userId]);
+  }, [userId, token]);
 
   const handleCopy = async (code, id) => {
     try {
@@ -44,14 +58,25 @@ export default function SubmissionsPage() {
       console.error("Failed to copy: ", err);
     }
   };
+
   if (loading) return <p className="text-center p-4">Loading submissions...</p>;
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">My Submissions</h1>
 
-      {!localStorage.getItem("token") ? (
-        <p className="text-red-500 font-medium">⚠️ Please login to see submissions.</p>
+      {!isValidToken ? (
+        <div className="text-center">
+          <p className="text-red-500 font-medium mb-4">
+            ⚠️ Please login to see submissions.
+          </p>
+          <button
+            onClick={() => navigate("/login")}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            🔑 Login
+          </button>
+        </div>
       ) : submissions.length === 0 ? (
         <p className="text-gray-500">No submissions yet.</p>
       ) : (

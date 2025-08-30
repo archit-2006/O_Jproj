@@ -1,17 +1,17 @@
+
+
 const { exec } = require("child_process");
-const fs = require("fs");
 const path = require("path");
 
-const outputPath = path.join(__dirname, "outputs");
-
-if (!fs.existsSync(outputPath)) {
-  fs.mkdirSync(outputPath, { recursive: true });
-}
-
 const executePython = (filepath, inputFilePath) => {
-  const jobID = path.basename(filepath).split(".")[0];
+  // Detect OS: Windows uses "python", Linux/Mac uses "python3"
+  const isWin = process.platform === "win32";
+  const pythonCmd = isWin ? "python" : "python3";
+
+  const command = `${pythonCmd} "${filepath}" < "${inputFilePath}"`;
+
   return new Promise((resolve, reject) => {
-    exec(`python "${filepath}" < "${inputFilePath}"`, (error, stdout, stderr) => {
+    exec(command, (error, stdout, stderr) => {
       if (error) {
         return reject({ error, stderr });
       }
