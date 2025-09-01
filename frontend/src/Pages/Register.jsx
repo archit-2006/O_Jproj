@@ -1,13 +1,17 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export default function Register() {
   const [formData, setFormData] = useState({
     firstname: '',
     lastname: '',
+    userhandle: '',
     email: '',
     password: '',
   });
+
+  const navigate = useNavigate();
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -16,11 +20,15 @@ export default function Register() {
     e.preventDefault();
     try {
       const res = await axios.post('http://localhost:5000/api/auth/register', formData);
-      console.log(res.data); // show success or auto login
+      console.log(res.data);
+
+      // ✅ Redirect to login page after successful registration
+      navigate('/login');
     } catch (err) {
       console.error(err.response?.data || err.message);
     }
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
@@ -30,7 +38,7 @@ export default function Register() {
             type="text"
             name="firstname"
             placeholder="First name"
-            value={formData.username}
+            value={formData.firstname}
             onChange={handleChange}
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
@@ -39,7 +47,16 @@ export default function Register() {
             type="text"
             name="lastname"
             placeholder="Last name"
-            value={formData.username}
+            value={formData.lastname}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <input
+            type="text"
+            name="userhandle"
+            placeholder="User handle"
+            value={formData.userhandle}
             onChange={handleChange}
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             required

@@ -113,6 +113,7 @@
 const Problem = require("../models/Problem");
 const Submission = require("../models/Submission");
 const axios = require("axios"); // compiler server
+const updateUserStats = require("../utils/updateUserStats");
 
 const submitCode = async (req, res) => {
   try {
@@ -230,6 +231,13 @@ const submitCode = async (req, res) => {
       verdict,
     });
     await submission.save();
+
+    // ✅ Update user stats after submission
+    if (verdict === "Accepted") {
+      await updateUserStats(userId, problem._id, problem.difficulty, true);
+    } else {
+      await updateUserStats(userId, problem._id, problem.difficulty, false);
+    }
 
     // ✅ Respond to client
     res.json(responsePayload);

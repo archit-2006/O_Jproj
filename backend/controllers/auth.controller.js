@@ -4,9 +4,9 @@ const jwt = require("jsonwebtoken");
 const errorHandler = require('../utils/errorHandler');
 exports.registerUser = async (req, res) => {
   try {
-    const { firstname, lastname, email, password } = req.body;
+    const { firstname, lastname,userhandle, email, password } = req.body;
 
-    if (!(firstname && lastname && email && password)) {
+    if (!(firstname && lastname && userhandle && email && password)) {
       return res.status(400).send("Please enter all the information");
     }
 
@@ -19,27 +19,32 @@ exports.registerUser = async (req, res) => {
       return res.status(400).send("User already exists with same email");
     }
 
+    const existingUsername = await User.findOne({ userhandle });
+    if (existingUsername) {
+      return res.status(400).send("User handle already taken");
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
       firstname,
       lastname,
+      userhandle,
       email,
       password: hashedPassword,
     });
 
-    const token = jwt.sign(
-      { id: user._id, email,role: user.role },
-      process.env.SECRET_KEY,
-      {
-        expiresIn: "1h",
-      }
-    );
-    res.json({ token });
-    user.token = token;
+    // const token = jwt.sign(
+    //   { id: user._id, email,role: user.role },
+    //   process.env.SECRET_KEY,
+    //   {
+    //     expiresIn: "1h",
+    //   }
+    // );
+    // user.token = token;
     user.password = undefined;
 
-    res.status(200).json({ message: "You have successfully registered!", user });
+    return res.status(200).json({ message: "You have successfully registered!", user });
   } catch (error) {
     console.log(error);
     res.status(500).send("Something went wrong");

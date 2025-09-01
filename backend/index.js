@@ -7,11 +7,15 @@ const middlewareError = require('./middleware/middlewareError');
 const submissionRoutes = require("./routes/submission.route");
 const runRoutes = require("./routes/run.route");
 const aiRoutes = require("./routes/ai.routes");
+const profileRoutes = require("./routes/profile.route");
+const path = require("path");
 
 const cors = require('cors');
 
 require("dotenv").config();
 DBConnection();
+
+app.use("/assets/avatar", express.static(path.join("assets", "avatars")));
 
 app.use(cors({
   origin: 'http://localhost:5173', // Vite dev server
@@ -30,9 +34,12 @@ app.get("/", (req, res) => {
 
 app.use('/api/problems', problemRoutes);
 
+app.use('/api', profileRoutes);
+
 app.use("/api", runRoutes);
 
 app.use("/api", submissionRoutes);
+
 
 app.use("/api/ai", aiRoutes);
 

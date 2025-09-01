@@ -8,7 +8,7 @@ import Navbar from "./components/Navbar";
 import CreateProblem from "./Pages/CreateProblem";
 import EditProblem from "./Pages/EditProblem";
 import SubmissionsPage from "./Pages/SubmissionPage";
-
+import ProfilePage from "./Pages/Profile"
 
 function App() {
   return (
@@ -21,6 +21,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/problem" element={<ProblemList />} />
+          <Route path="/profile" element={<ProfilePage />} />
           <Route path="/submission/:userId" element={<SubmissionsPage />} />
           <Route path="/problems/:id" element={<ProblemPage />} />
           <Route path="/problems/create" element={<CreateProblem />} />
