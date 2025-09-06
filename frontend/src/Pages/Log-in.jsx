@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import toast from "react-hot-toast";
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const navigate = useNavigate(); // hook for navigation
-
+  const BACKEND_URL=import.meta.env.VITE_API_URL
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -14,7 +15,7 @@ export default function Login() {
     e.preventDefault();
     try {
       const res = await axios.post(
-        `http://localhost:5000/api/auth/login`, // fixed missing port
+        `${BACKEND_URL}/auth/login`, // fixed missing port
         formData
       );
 
@@ -23,10 +24,12 @@ export default function Login() {
       // Example: store token in localStorage
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
+        toast.success("Login successful! 🎉");
+        navigate("/");
       }
 
       // redirect to home
-      navigate("/");
+      
 
     } catch (err) {
       console.error(err.response?.data || err.message);

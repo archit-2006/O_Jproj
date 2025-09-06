@@ -1,8 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import toast from "react-hot-toast";
+
 
 export default function Register() {
+  const BACKEND_URL=import.meta.env.VITE_API_URL
+
   const [formData, setFormData] = useState({
     firstname: '',
     lastname: '',
@@ -17,10 +21,12 @@ export default function Register() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
+
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/register', formData);
+      const res = await axios.post(`${BACKEND_URL}/auth/register`, formData);
       console.log(res.data);
+      toast.success("User registered successful! 🎉");
 
       // ✅ Redirect to login page after successful registration
       navigate('/login');

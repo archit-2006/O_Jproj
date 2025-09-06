@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+
 import Home from "./Pages/Home";
 import Login from "./Pages/Log-in";
 import Register from "./Pages/Register";
@@ -28,6 +30,7 @@ function App() {
           <Route path="/problems/edit/:id" element={<EditProblem />} />
         </Routes>
       </main>
+      <Toaster position="top-center" reverseOrder={false} />
     </BrowserRouter>
   );
 }
