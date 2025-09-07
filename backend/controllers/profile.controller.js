@@ -79,4 +79,30 @@ const updateAvatar = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-module.exports = { getProfile, updateProfile, updateAvatar };
+const updateBio = async (req, res) => {
+  try {
+    const { bio } = req.body;
+    if (!bio) {
+      return res.status(400).json({ error: "Bio is required" });
+    }
+
+    const userId = req.user.id; // from JWT middleware
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { bio },
+      { new: true }
+    ).select("-password");
+
+    res.json({
+      success: true,
+      message: "Bio updated successfully",
+      user: updatedUser,
+    });
+  } catch (err) {
+    console.error("Update Bio Error:", err);
+    res.status(500).json({ error: "Failed to update bio" });
+  }
+};
+
+module.exports = { getProfile, updateProfile, updateAvatar ,updateBio};

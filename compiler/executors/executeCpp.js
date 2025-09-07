@@ -25,8 +25,11 @@ const executeCpp = (filepath, inputFilePath) => {
   const command = `g++ "${filepath}" -o "${outPath}" && cd "${outputPath}" && ${runCmd}`;
 
   return new Promise((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
+    exec(command,{ timeout: 2000 }, (error, stdout, stderr) => {
       if (error) {
+        if (error.killed || error.signal === "SIGTERM") {
+          return reject({ error: "Time Limit Exceeded (TLE)", stderr: "" });
+        }
         return reject({ error, stderr });
       }
       if (stderr) {

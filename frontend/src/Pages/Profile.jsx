@@ -1,321 +1,24 @@
-// import { useEffect, useState } from "react";
-// import axios from "axios";
-
-// export default function Profile() {
-//   const [user, setUser] = useState(null);
-
-//   useEffect(() => {
-//     const fetchProfile = async () => {
-//       try {
-//         const token = localStorage.getItem("token"); // assuming you store JWT in localStorage
-//         const res = await axios.get("http://localhost:5000/api/profile", {
-//           headers: { Authorization: `Bearer ${token}` },
-//         });
-//         setUser(res.data);
-//       } catch (err) {
-//         console.error(err.response?.data || err.message);
-//       }
-//     };
-
-//     fetchProfile();
-//   }, []);
-
-//   if (!user) {
-//     return <p className="text-center mt-10">Loading profile...</p>;
-//   }
-
-//   // ✅ Calculate success rate (avoid divide by 0)
-//   const successRate =
-//     user.stats.totalSubmissions > 0
-//       ? ((user.stats.successfulSubmissions / user.stats.totalSubmissions) * 100).toFixed(2)
-//       : 0;
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
-//       <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-2xl">
-//         {/* Avatar + Basic Info */}
-//         <div className="flex items-center space-x-6 mb-6">
-//           <img
-//             src={user.avatar || "https://via.placeholder.com/100"}
-//             alt="avatar"
-//             className="w-24 h-24 rounded-full border"
-//           />
-//           <div>
-//             <h2 className="text-2xl font-bold">{user.userhandle}</h2>
-//             <p className="text-gray-600">{user.firstname} {user.lastname}</p>
-//             <p className="text-gray-500">{user.email}</p>
-//             <p className="mt-2 text-sm italic">{user.bio || "No bio yet..."}</p>
-//           </div>
-//         </div>
-
-//         {/* Stats Section */}
-//         <div className="grid grid-cols-2 gap-4 text-center">
-//           <div className="bg-gray-50 p-4 rounded-xl">
-//             <h3 className="font-semibold">Easy Solved</h3>
-//             <p className="text-xl">{user.stats.easySolved.length}</p>
-//           </div>
-//           <div className="bg-gray-50 p-4 rounded-xl">
-//             <h3 className="font-semibold">Medium Solved</h3>
-//             <p className="text-xl">{user.stats.mediumSolved.length}</p>
-//           </div>
-//           <div className="bg-gray-50 p-4 rounded-xl">
-//             <h3 className="font-semibold">Hard Solved</h3>
-//             <p className="text-xl">{user.stats.hardSolved.length}</p>
-//           </div>
-//           <div className="bg-gray-50 p-4 rounded-xl">
-//             <h3 className="font-semibold">Total Submissions</h3>
-//             <p className="text-xl">{user.stats.totalSubmissions}</p>
-//           </div>
-//           <div className="bg-gray-50 p-4 rounded-xl">
-//             <h3 className="font-semibold">Successful Submissions</h3>
-//             <p className="text-xl">{user.stats.successfulSubmissions}</p>
-//           </div>
-//           <div className="bg-gray-50 p-4 rounded-xl">
-//             <h3 className="font-semibold">Success Rate</h3>
-//             <p className="text-xl">{successRate}%</p>
-//           </div>
-//           <div className="bg-gray-50 p-4 rounded-xl">
-//             <h3 className="font-semibold">Current Streak</h3>
-//             <p className="text-xl">{user.stats.currentStreak} days</p>
-//           </div>
-//           <div className="bg-gray-50 p-4 rounded-xl">
-//             <h3 className="font-semibold">Longest Streak</h3>
-//             <p className="text-xl">{user.stats.longestStreak} days</p>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// import { useEffect, useState } from "react";
-// import axios from "axios";
-
-// export default function Profile() {
-//   const [user, setUser] = useState(null);
-//   const [selectedFile, setSelectedFile] = useState(null);
-
-//   useEffect(() => {
-//     const fetchProfile = async () => {
-//       try {
-//         const token = localStorage.getItem("token");
-//         const res = await axios.get("http://localhost:5000/api/profile", {
-//           headers: { Authorization: `Bearer ${token}` },
-//         });
-//         setUser(res.data);
-//       } catch (err) {
-//         console.error(err.response?.data || err.message);
-//       }
-//     };
-//     fetchProfile();
-//   }, []);
-
-//   const handleFileChange = (e) => {
-//     setSelectedFile(e.target.files[0]);
-//   };
-
-//   const handleUpload = async () => {
-//     if (!selectedFile) return alert("Please select a file");
-
-//     const formData = new FormData();
-//     formData.append("avatar", selectedFile);
-
-//     try {
-//       const token = localStorage.getItem("token");
-//       const res = await axios.post("http://localhost:5000/api/upload-avatar", formData, {
-//         headers: {
-//           "Content-Type": "multipart/form-data",
-//           Authorization: `Bearer ${token}`,
-//         },
-//       });
-
-//       setUser(res.data.user);
-//       setSelectedFile(null);
-//     } catch (err) {
-//       console.error(err.response?.data || err.message);
-//     }
-//   };
-
-//   if (!user) return <p>Loading...</p>;
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
-//       <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-2xl">
-//         {/* Avatar + Upload */}
-//         <div className="flex flex-col items-center space-y-4">
-//           <img
-//             src={user.avatar || "https://via.placeholder.com/100"}
-//             alt="avatar"
-//             className="w-24 h-24 rounded-full border"
-//           />
-//           <input type="file" onChange={handleFileChange} className="border p-2 rounded" />
-//           <button
-//             onClick={handleUpload}
-//             className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-//           >
-//             Upload Avatar
-//           </button>
-//         </div>
-
-//         {/* Profile Info */}
-//         <div className="mt-6 text-center">
-//           <h2 className="text-2xl font-bold">{user.userhandle}</h2>
-//           <p className="text-gray-600">{user.firstname} {user.lastname}</p>
-//           <p className="text-gray-500">{user.email}</p>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-
-// import { useEffect, useState } from "react";
-// import axios from "axios";
-
-// export default function Profile() {
-//   const [user, setUser] = useState(null);
-//   const [avatarFile, setAvatarFile] = useState(null);
-
-//   useEffect(() => {
-//     const fetchProfile = async () => {
-//       try {
-//         const token = localStorage.getItem("token");
-//         const res = await axios.get("http://localhost:5000/api/profile", {
-//           headers: { Authorization: `Bearer ${token}` },
-//         });
-//         setUser(res.data);
-//       } catch (err) {
-//         console.error(err.response?.data || err.message);
-//       }
-//     };
-
-//     fetchProfile();
-//   }, []);
-
-//   // ✅ Avatar Upload Handler
-//   const handleAvatarUpload = async (e) => {
-//     e.preventDefault();
-//     if (!avatarFile) return alert("Please select an image");
-
-//     const formData = new FormData();
-//     formData.append("avatar", avatarFile);
-
-//     try {
-//       const token = localStorage.getItem("token");
-//       const res = await axios.put("http://localhost:5000/api/profile/avatar", formData, {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//           "Content-Type": "multipart/form-data",
-//         },
-//       });
-//       setUser(res.data); // update state with new avatar
-//       setAvatarFile(null);
-//     } catch (err) {
-//       console.error(err.response?.data || err.message);
-//     }
-//   };
-
-//   if (!user) {
-//     return <p className="text-center mt-10">Loading profile...</p>;
-//   }
-
-//   const successRate =
-//     user.stats.totalSubmissions > 0
-//       ? ((user.stats.successfulSubmissions / user.stats.totalSubmissions) * 100).toFixed(2)
-//       : 0;
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
-//       <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-2xl">
-//         {/* Avatar + Basic Info */}
-//         <div className="flex items-center space-x-6 mb-6">
-//           <img
-//             src={user.avatar || "https://via.placeholder.com/100"}
-//             alt="avatar"
-//             className="w-24 h-24 rounded-full border"
-//           />
-//           <div>
-//             <h2 className="text-2xl font-bold">{user.userhandle}</h2>
-//             <p className="text-gray-600">{user.firstname} {user.lastname}</p>
-//             <p className="text-gray-500">{user.email}</p>
-//             <p className="mt-2 text-sm italic">{user.bio || "No bio yet..."}</p>
-//           </div>
-//         </div>
-
-//         {/* ✅ Avatar Upload Form */}
-//         <form onSubmit={handleAvatarUpload} className="mb-6">
-//           <input
-//             type="file"
-//             accept="image/*"
-//             onChange={(e) => setAvatarFile(e.target.files[0])}
-//             className="mb-2"
-//           />
-//           <button
-//             type="submit"
-//             className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-//           >
-//             Upload Avatar
-//           </button>
-//         </form>
-
-//         {/* Stats Section */}
-//         <div className="grid grid-cols-2 gap-4 text-center">
-//           <div className="bg-gray-50 p-4 rounded-xl">
-//             <h3 className="font-semibold">Easy Solved</h3>
-//             <p className="text-xl">{user.stats.easySolved.length}</p>
-//           </div>
-//           <div className="bg-gray-50 p-4 rounded-xl">
-//             <h3 className="font-semibold">Medium Solved</h3>
-//             <p className="text-xl">{user.stats.mediumSolved.length}</p>
-//           </div>
-//           <div className="bg-gray-50 p-4 rounded-xl">
-//             <h3 className="font-semibold">Hard Solved</h3>
-//             <p className="text-xl">{user.stats.hardSolved.length}</p>
-//           </div>
-//           <div className="bg-gray-50 p-4 rounded-xl">
-//             <h3 className="font-semibold">Total Submissions</h3>
-//             <p className="text-xl">{user.stats.totalSubmissions}</p>
-//           </div>
-//           <div className="bg-gray-50 p-4 rounded-xl">
-//             <h3 className="font-semibold">Successful Submissions</h3>
-//             <p className="text-xl">{user.stats.successfulSubmissions}</p>
-//           </div>
-//           <div className="bg-gray-50 p-4 rounded-xl">
-//             <h3 className="font-semibold">Success Rate</h3>
-//             <p className="text-xl">{successRate}%</p>
-//           </div>
-//           <div className="bg-gray-50 p-4 rounded-xl">
-//             <h3 className="font-semibold">Current Streak</h3>
-//             <p className="text-xl">{user.stats.currentStreak} days</p>
-//           </div>
-//           <div className="bg-gray-50 p-4 rounded-xl">
-//             <h3 className="font-semibold">Longest Streak</h3>
-//             <p className="text-xl">{user.stats.longestStreak} days</p>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
 import { useEffect, useState } from "react";
 import axios from "axios";
-// import defaultAvatar from "../assets/avatar.png";
-import { Pencil } from "lucide-react"; // install lucide-react if not already
-
+import { Pencil, Save, X } from "lucide-react";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
+  const [editingBio, setEditingBio] = useState(false);
+  const [bio, setBio] = useState("");
+  const BACKEND_URL = import.meta.env.VITE_API_URL;
+  const PORT = import.meta.env.VITE_API_PORT;
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/profile", {
+        const res = await axios.get(`${BACKEND_URL}/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(res.data);
-        console.log(res.data)
+        setBio(res.data.bio || "");
       } catch (err) {
         console.error(err.response?.data || err.message);
       }
@@ -332,19 +35,39 @@ export default function Profile() {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.put("http://localhost:5000/api/avatar", formData, {
+      const res = await axios.put(`${BACKEND_URL}/avatar`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
-      setUser(res.data); // backend sends updated user (with avatar url)
-      console.log(user.avatar);
+      setUser(res.data);
       setAvatarFile(null);
     } catch (err) {
       console.error(err.response?.data || err.message);
     }
   };
+
+ const handleBioUpdate = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const res = await axios.put(
+      `${BACKEND_URL}/bio`,
+      { bio },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    // 👇 correctly update only user object
+    setUser(res.data.user); 
+    setBio(res.data.user.bio); 
+    setEditingBio(false);
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+  }
+};
+
 
   if (!user) {
     return <p className="text-center mt-10">Loading profile...</p>;
@@ -368,10 +91,15 @@ export default function Profile() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 p-6">
       <div className="bg-white shadow-2xl rounded-3xl p-10 w-full max-w-4xl">
-        <div className="flex items-center space-x-8 mb-10">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row items-center sm:items-start sm:space-x-8 mb-10">
           <div className="relative w-32 h-32">
             <img
-              src={user?.avatar ? `http://localhost:5000${user.avatar}` : "http://localhost:5000/assets/avatar/default.png"}
+              src={
+                user?.avatar
+                  ? `http://localhost:${PORT}${user.avatar}`
+                  : `http://localhost:${PORT}/assets/avatar/default.png`
+              }
               alt="avatar"
               className="w-32 h-32 rounded-full border-4 border-blue-500 shadow-md object-cover"
             />
@@ -380,7 +108,7 @@ export default function Profile() {
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={(e) => setAvatarFile(e.target.files[0])} // ✅ only store file
+              onChange={(e) => setAvatarFile(e.target.files[0])}
             />
             <label
               htmlFor="avatar-upload"
@@ -390,38 +118,75 @@ export default function Profile() {
             </label>
           </div>
 
-          {/* ✅ Show file name if selected */}
-          {avatarFile && (
-            <p className="mt-2 text-sm text-gray-600">
-              Selected: <span className="font-medium">{avatarFile.name}</span>
-            </p>
-          )}
-
-          {/* ✅ Upload button */}
-          {avatarFile && (
-            <button
-              onClick={handleAvatarUpload}
-              className="mt-2 px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition"
-            >
-              Upload Avatar
-            </button>
-          )}
-
-
-          <div>
-            <h2 className="text-3xl font-extrabold text-gray-800">{user.userhandle}</h2>
+          <div className="mt-6 sm:mt-0">
+            <h2 className="text-3xl font-extrabold text-gray-800">
+              {user.userhandle}
+            </h2>
             <p className="text-lg text-gray-600">
               {user.firstname} {user.lastname}
             </p>
             <p className="text-gray-500">{user.email}</p>
-            <p className="mt-3 text-sm italic text-gray-600">
-              {user.bio || "No bio yet..."}
-            </p>
+
+            {/* Bio Section */}
+            <div className="mt-4 flex items-start space-x-2">
+              {!editingBio ? (
+                <>
+                  <p className="text-sm italic text-pink-600 max-w-md">
+                    {user.bio || "No bio yet..."}
+                  </p>
+                  <button
+                    onClick={() => setEditingBio(true)}
+                    className="text-blue-600 hover:text-blue-800"
+                  >
+                    <Pencil size={16} />
+                  </button>
+                </>
+              ) : (
+                <div className="flex flex-col space-y-2">
+                  <textarea
+                    className="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500"
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                  />
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={handleBioUpdate}
+                      className="px-3 py-1 bg-green-600 text-white rounded-lg flex items-center space-x-1 hover:bg-green-700"
+                    >
+                      <Save size={14} /> <span>Save</span>
+                    </button>
+                    <button
+                      onClick={() => setEditingBio(false)}
+                      className="px-3 py-1 bg-gray-300 text-gray-700 rounded-lg flex items-center space-x-1 hover:bg-gray-400"
+                    >
+                      <X size={14} /> <span>Cancel</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
+        {/* Upload button under avatar */}
+        {avatarFile && (
+          <div className="mb-6 flex items-center space-x-3">
+            <p className="text-sm text-gray-600">
+              Selected: <span className="font-medium">{avatarFile.name}</span>
+            </p>
+            <button
+              onClick={handleAvatarUpload}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition"
+            >
+              Upload Avatar
+            </button>
+          </div>
+        )}
+
         {/* Stats Section */}
-        <h3 className="text-2xl font-bold text-gray-800 mb-6">📊 User Statistics</h3>
+        <h3 className="text-2xl font-bold text-gray-800 mb-6">
+          📊 User Statistics
+        </h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 text-center">
           {[
             { label: "Easy Solved", value: stats.easySolved.length },

@@ -2,8 +2,18 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
-const API = import.meta.env.VITE_API_URL; // your backend API base URL
+const API = import.meta.env.VITE_API_URL;
 
 export default function SubmissionsPage() {
   const [submissions, setSubmissions] = useState([]);
@@ -11,14 +21,14 @@ export default function SubmissionsPage() {
   const [copiedId, setCopiedId] = useState(null);
   const [isValidToken, setIsValidToken] = useState(true);
 
-  const token = localStorage.getItem("token"); // saved at login
+  const token = localStorage.getItem("token");
   const navigate = useNavigate();
   let userId = null;
 
   if (token) {
     try {
       const decoded = jwtDecode(token);
-      userId = decoded.id; // depends on what you encoded in token
+      userId = decoded.id;
     } catch (err) {
       console.error("Invalid token:", err);
       setIsValidToken(false);
@@ -40,7 +50,7 @@ export default function SubmissionsPage() {
         setSubmissions(res.data);
       } catch (error) {
         console.error("Error fetching submissions:", error);
-        setIsValidToken(false); // treat error as invalid session
+        setIsValidToken(false);
       } finally {
         setLoading(false);
       }
@@ -53,77 +63,82 @@ export default function SubmissionsPage() {
     try {
       await navigator.clipboard.writeText(code);
       setCopiedId(id);
-      setTimeout(() => setCopiedId(null), 2000); // reset message after 2s
+      setTimeout(() => setCopiedId(null), 2000);
     } catch (err) {
       console.error("Failed to copy: ", err);
     }
   };
 
-  if (loading) return <p className="text-center p-4">Loading submissions...</p>;
+  if (loading)
+    return (
+      <p className="text-center text-gray-500 p-6 animate-pulse">
+        ⏳ Loading submissions...
+      </p>
+    );
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">My Submissions</h1>
+    <div className="p-6 max-w-6xl mx-auto space-y-6">
+      <h1 className="text-3xl font-bold text-gray-800">📜 My Submissions</h1>
 
       {!isValidToken ? (
-        <div className="text-center">
+        <div className="flex flex-col items-center justify-center p-10 bg-white rounded-xl shadow-md">
           <p className="text-red-500 font-medium mb-4">
             ⚠️ Please login to see submissions.
           </p>
-          <button
-            onClick={() => navigate("/login")}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            🔑 Login
-          </button>
+          <Button onClick={() => navigate("/login")}>🔑 Login</Button>
         </div>
       ) : submissions.length === 0 ? (
-        <p className="text-gray-500">No submissions yet.</p>
+        <p className="text-gray-500 text-center">No submissions yet.</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse border border-gray-300 text-sm">
-            <thead>
-              <tr className="bg-gray-100 text-left">
-                <th className="border p-2">#</th>
-                <th className="border p-2">Problem</th>
-                <th className="border p-2">Language</th>
-                <th className="border p-2">Verdict</th>
-                <th className="border p-2">Submitted At</th>
-                <th className="border p-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
+        <div className="overflow-x-auto bg-white rounded-xl shadow-md">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-gray-100">
+                <TableHead>#</TableHead>
+                <TableHead>Problem</TableHead>
+                <TableHead>Language</TableHead>
+                <TableHead>Verdict</TableHead>
+                <TableHead>Submitted At</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {submissions.map((sub, idx) => (
-                <tr key={sub._id} className="hover:bg-gray-50">
-                  <td className="border p-2">{idx + 1}</td>
-                  <td className="border p-2">{sub.problemId?.title || "Unknown"}</td>
-                  <td className="border p-2">{sub.language}</td>
-                  <td
-                    className={`border p-2 font-semibold ${
-                      sub.verdict === "AC"
-                        ? "text-green-600"
-                        : sub.verdict === "WA"
-                        ? "text-red-600"
-                        : "text-yellow-600"
-                    }`}
-                  >
-                    {sub.verdict}
-                  </td>
-                  <td className="border p-2">
+                <TableRow key={sub._id} className="hover:bg-gray-50">
+                  <TableCell>{idx + 1}</TableCell>
+                  <TableCell>{sub.problemId?.title || "Unknown"}</TableCell>
+                  <TableCell>
+                    <Badge variant="secondary">{sub.language}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={
+                        sub.verdict === "Accepted"
+                          ? "success"
+                          : sub.verdict === "Wrong Answer"
+                          ? "destructive"
+                          : "warning"
+                      }
+                    >
+                      {sub.verdict}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
                     {new Date(sub.createdAt).toLocaleString()}
-                  </td>
-                  <td className="border p-2">
-                    <button
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      size="sm"
+                      variant="outline"
                       onClick={() => handleCopy(sub.code, sub._id)}
-                      className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
                     >
                       {copiedId === sub._id ? "✅ Copied!" : "📋 Copy Code"}
-                    </button>
-                  </td>
-                </tr>
+                    </Button>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       )}
     </div>

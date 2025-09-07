@@ -1,310 +1,184 @@
-// import { Link, useNavigate } from "react-router-dom";
-
-// function Navbar() {
-//   const navigate = useNavigate();
-//   const token = localStorage.getItem("token");
-
-//   const handleLogout = () => {
-//     localStorage.removeItem("token"); // clear token
-//     navigate("/login"); // redirect to login
-//   };
-
-//   return (
-//     <nav
-//       style={{
-//         padding: "10px 20px",
-//         background: "#282c34",
-//         display: "flex",
-//         alignItems: "center",
-//         justifyContent: "space-between",
-//       }}
-//     >
-//       {/* Left side - Brand */}
-//       <div style={{ color: "#fff", fontSize: "20px", fontWeight: "bold" }}>
-//         MyApp
-//       </div>
-
-//       {/* Right side - Links */}
-//       <div>
-//         <Link to="/" style={linkStyle}>
-//           Home
-//         </Link>
-//         <Link to="/problem" style={linkStyle}>
-//           Problems
-//         </Link>
-//         <Link to="/submission/:userId" style={linkStyle}>
-//           Submissions
-//         </Link>
-
-//         {!token ? (
-//           <>
-//             <Link to="/login" style={linkStyle}>
-//               Login
-//             </Link>
-//             <Link to="/register" style={linkStyle}>
-//               Register
-//             </Link>
-//           </>
-//         ) : (
-//           <button
-//             onClick={handleLogout}
-//             style={{
-//               ...linkStyle,
-//               background: "transparent",
-//               border: "none",
-//               cursor: "pointer",
-//             }}
-//           >
-//             Logout
-//           </button>
-//         )}
-//       </div>
-//     </nav>
-//   );
-// }
-
-// const linkStyle = {
-//   color: "#fff",
-//   textDecoration: "none",
-//   marginLeft: "15px",
-// };
-
-// export default Navbar;
-
-
-// import { Link, useNavigate } from "react-router-dom";
-
-// function Navbar() {
-//   const navigate = useNavigate();
-//   const token = localStorage.getItem("token");
-
-//   const handleLogout = () => {
-//     localStorage.removeItem("token"); // clear token
-//     navigate("/login"); // redirect to login
-//   };
-
-//   return (
-//     <nav
-//       style={{
-//         padding: "10px 20px",
-//         background: "#282c34",
-//         display: "flex",
-//         alignItems: "center",
-//         justifyContent: "space-between",
-//       }}
-//     >
-//       {/* Left side - Brand */}
-//       <div style={{ color: "#fff", fontSize: "20px", fontWeight: "bold" }}>
-//         MyApp
-//       </div>
-
-//       {/* Right side - Links */}
-//       <div style={{ display: "flex", alignItems: "center" }}>
-//         <Link to="/" style={linkStyle}>
-//           Home
-//         </Link>
-//         <Link to="/problem" style={linkStyle}>
-//           Problems
-//         </Link>
-//         <Link to="/submission/:userId" style={linkStyle}>
-//           Submissions
-//         </Link>
-
-//         {!token ? (
-//           <>
-//             <Link to="/login" style={linkStyle}>
-//               Login
-//             </Link>
-//             <Link to="/register" style={linkStyle}>
-//               Register
-//             </Link>
-//           </>
-//         ) : (
-//           <>
-//             {/* Profile Circle */}
-//             <div
-//               onClick={() => navigate("/profile")}
-//               style={{
-//                 width: "35px",
-//                 height: "35px",
-//                 borderRadius: "50%",
-//                 backgroundColor: "#61dafb",
-//                 color: "#282c34",
-//                 display: "flex",
-//                 alignItems: "center",
-//                 justifyContent: "center",
-//                 marginLeft: "15px",
-//                 cursor: "pointer",
-//                 fontWeight: "bold",
-//               }}
-//             >
-//               {/* Just first letter of username for now */}
-//               U
-//             </div>
-
-//             <button
-//               onClick={handleLogout}
-//               style={{
-//                 ...linkStyle,
-//                 background: "transparent",
-//                 border: "none",
-//                 cursor: "pointer",
-//               }}
-//             >
-//               Logout
-//             </button>
-//           </>
-//         )}
-//       </div>
-//     </nav>
-//   );
-// }
-
-// const linkStyle = {
-//   color: "#fff",
-//   textDecoration: "none",
-//   marginLeft: "15px",
-// };
-
-// export default Navbar;
-
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { Menu } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import axios from "axios";
 
-function Navbar() {
+export default function Navbar() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  const [showDropdown, setShowDropdown] = useState(false);
   const [username, setUsername] = useState("");
+  const [userAvatarUrl, setUserAvatarUrl] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const BACKEND_URL = import.meta.env.VITE_API_URL;
+  const PORT = import.meta.env.VITE_API_PORT;
 
   useEffect(() => {
-    if (token) {
+    const fetchProfile = async () => {
+      if (!token) return; // no need to fetch if not logged in
+      setLoading(true);
       try {
-        const decoded = JSON.parse(atob(token.split(".")[1])); // decode JWT
-        setUsername(decoded.userhandle || "U");
-      } catch {
-        setUsername("U");
+        const res = await axios.get(`${BACKEND_URL}/profile`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setUsername(res.data.userhandle || "");
+        setUserAvatarUrl(
+          res.data.avatar
+            ? `http://localhost:${PORT}${res.data.avatar}`
+            : `http://localhost:${PORT}/assets/avatar/default.png`
+        );
+      } catch (err) {
+        console.error(err.response?.data || err.message);
+      } finally {
+        setLoading(false);
       }
-      setShowDropdown(false);
-    }
-  }, [token]);
+    };
+
+    fetchProfile();
+  }, [token]); // ✅ refetch when token changes (login/logout)
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    setUsername("");
+    setUserAvatarUrl("");
     navigate("/login");
   };
 
   return (
-    <nav
-      style={{
-        padding: "10px 20px",
-        background: "#282c34",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}
-    >
-      {/* Left side - Brand */}
-      <div style={{ color: "#fff", fontSize: "20px", fontWeight: "bold" }}>
-        MyApp
-      </div>
+    <nav className="sticky z-50 max-w-8xl mx-auto rounded-2xl bg-indigo-200 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 shadow-lg">
+      <div className="px-6 sm:px-8">
+        <div className="flex justify-between h-16 items-center">
+          {/* Logo */}
+          <Link
+            to="/"
+            className="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400 hover:opacity-80 transition"
+          >
+            OJ Platform
+          </Link>
 
-      {/* Right side - Links */}
-      <div style={{ display: "flex", alignItems: "center", position: "relative" }}>
-        <Link to="/" style={linkStyle}>
-          Home
-        </Link>
-        <Link to="/problem" style={linkStyle}>
-          Problems
-        </Link>
-        <Link to="/submission/:userId" style={linkStyle}>
-          Submissions
-        </Link>
-
-        {!token ? (
-          <>
-            <Link to="/login" style={linkStyle}>
-              Login
-            </Link>
-            <Link to="/register" style={linkStyle}>
-              Register
-            </Link>
-          </>
-        ) : (
-          <>
-            {/* Profile Circle as Dropdown Trigger */}
-            <div
-              onClick={() => setShowDropdown(!showDropdown)}
-              style={{
-                width: "35px",
-                height: "35px",
-                borderRadius: "50%",
-                backgroundColor: "#61dafb",
-                color: "#282c34",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginLeft: "15px",
-                cursor: "pointer",
-                fontWeight: "bold",
-                userSelect: "none",
-              }}
+          {/* Desktop Nav */}
+          <div className="hidden md:flex space-x-6">
+            <Link
+              to="/"
+              className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
             >
-              {username.charAt(0).toUpperCase()}
-            </div>
+              Home
+            </Link>
+            <Link
+              to="/problem"
+              className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
+            >
+              Problems
+            </Link>
+            <Link
+              to="/submission/:userId"
+              className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
+            >
+              Submissions
+            </Link>
+          </div>
 
-            {/* Dropdown Menu */}
-            {showDropdown && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: "50px",
-                  right: "0",
-                  background: "#fff",
-                  borderRadius: "8px",
-                  boxShadow: "0px 4px 8px rgba(0,0,0,0.2)",
-                  overflow: "hidden",
-                  zIndex: 100,
-                }}
-              >
-                <button
-                  onClick={() => {
-                        setShowDropdown(false);   // close dropdown
-                        navigate("/profile");}
-                      }
-                  style={dropdownItem}
+          {/* Auth Buttons / Profile */}
+          <div className="hidden md:flex space-x-3">
+            {!token ? (
+              <>
+                <Button asChild variant="outline" className="rounded-full px-5">
+                  <Link to="/login">Login</Link>
+                </Button>
+                <Button asChild className="rounded-full px-5">
+                  <Link to="/register">Register</Link>
+                </Button>
+              </>
+            ) : (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="secondary"
+                    className="rounded-full w-10 h-10 p-0"
+                  >
+                    <Avatar className="w-10 h-10">
+                      {!loading ? (
+                        <AvatarImage
+                          src={userAvatarUrl}
+                          alt={username || "User"}
+                        />
+                      ) : null}
+                      <AvatarFallback>
+                        {username ? username.charAt(0).toUpperCase() : "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+
+                <DropdownMenuContent
+                  align="end"
+                  className="w-48 rounded-xl shadow-md"
                 >
-                  Profile
-                </button>
-                <button
-                  onClick={handleLogout}
-                  style={dropdownItem}
-                >
-                  Logout
-                </button>
-              </div>
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile">Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout}>
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
-          </>
-        )}
+          </div>
+
+          {/* Mobile Menu */}
+          <div className="md:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full">
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="w-48 rounded-xl shadow-md"
+              >
+                <DropdownMenuItem asChild>
+                  <Link to="/">Home</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/problem">Problems</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/submission/:userId">Submissions</Link>
+                </DropdownMenuItem>
+                {!token ? (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link to="/login">Login</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/register">Register</Link>
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link to="/profile">Profile</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleLogout}>
+                      Logout
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
       </div>
     </nav>
   );
 }
-
-const linkStyle = {
-  color: "#fff",
-  textDecoration: "none",
-  marginLeft: "15px",
-};
-
-const dropdownItem = {
-  display: "block",
-  padding: "10px 20px",
-  width: "100%",
-  textAlign: "left",
-  background: "white",
-  border: "none",
-  cursor: "pointer",
-};
-
-export default Navbar;

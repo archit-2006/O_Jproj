@@ -120,7 +120,6 @@ const submitCode = async (req, res) => {
     const { id } = req.params; // problem id
     const { code, language } = req.body;
     const userId = req.user.id; // 👈 from auth middleware
-
     // Find problem
     const problem = await Problem.findById(id);
     if (!problem) return res.status(404).json({ error: "Problem not found" });

@@ -28,12 +28,12 @@ const runCode = async (req, res) => {
         return { output: response.data.output?.trim(), error: null };
       } catch (err) {
         const errMsg = err.response?.data?.error|| err.message;
-        console.log(errMsg);
+        // console.log(errMsg);
         if (typeof errMsg === "string" && (errMsg.includes("Compilation") || errMsg.toLowerCase().includes("error") ||
           errMsg.toLowerCase().includes("expected"))) {
           return { output: null, error: "Compilation Error" };
-        } else if (err.code === "ECONNABORTED") {
-          return { output: null, error: "TLE" };
+        } else if (errMsg.toUpperCase().includes("TLE") ) {
+          return { output: null, error: "Time Limit Exceeded" };
         } else {
           return { output: null, error: "Runtime Error" };
         }
@@ -61,7 +61,7 @@ const runCode = async (req, res) => {
         return res.json({
           status: "failed",
           verdict: error,
-          stage: "execution",
+          stage: "sample testcase",
           testcase: i + 1,
           message: `Error occurred on testcase ${i + 1}`,
         });
