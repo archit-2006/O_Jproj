@@ -9,8 +9,8 @@ const runRoutes = require("./routes/run.route");
 const aiRoutes = require("./routes/ai.routes");
 const profileRoutes = require("./routes/profile.route");
 const path = require("path");
-
 const cors = require('cors');
+const FRONTEND_URI=process.env.FRONTEND_URI
 
 require("dotenv").config();
 DBConnection();
@@ -18,7 +18,7 @@ DBConnection();
 app.use("/assets/avatar", express.static(path.join("assets", "avatars")));
 
 app.use(cors({
-  origin: 'http://localhost:5173', // Vite dev server
+  origin: `${FRONTEND_URI}`, // Vite dev server
   credentials: true               // if sending cookies/token
 }));
 

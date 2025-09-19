@@ -5,7 +5,7 @@ const Problem = require("../models/Problem");
 // POST /api/run/:id
 const runCode = async (req, res) => {
   const { code, language, id, useCustomInput, input } = req.body;
-
+  const COMPILER_URI = process.env.COMPILER_URI;
   try {
     // fetch problem
     const problem = await Problem.findById(id);
@@ -20,7 +20,7 @@ const runCode = async (req, res) => {
     // helper to send code to compiler server
     const execute = async (testInput) => {
       try {
-        const response = await axios.post("http://localhost:4000/run", {
+        const response = await axios.post(`${ COMPILER_URI }/run`, {
           code,
           language,
           input: testInput,

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const COMPILER_AI_BASE = process.env.COMPILER_AI_BASE || "http://localhost:4000"; 
+const COMPILER_URI = process.env.COMPILER_URI ; 
 // 👆 change to your compiler server’s URL
 
 // ✅ Get AI Suggestion (before/during solving)
@@ -8,7 +8,7 @@ export const aiSuggestion = async (req, res, next) => {
   try {
     const { problem, code } = req.body;
 
-    const response = await axios.post(`${COMPILER_AI_BASE}/suggestion`, {
+    const response = await axios.post(`${COMPILER_URI}/suggestion`, {
       problem,
       code,
     });
@@ -24,7 +24,7 @@ export const aiReview = async (req, res, next) => {
   try {
     const { problem,verdict,message, code } = req.body;
 
-    const response = await axios.post(`${COMPILER_AI_BASE}/ai-review`, {
+    const response = await axios.post(`${COMPILER_URI}/ai-review`, {
       problem,
       code,
       verdict,

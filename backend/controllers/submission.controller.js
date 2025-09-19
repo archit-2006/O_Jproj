@@ -116,6 +116,7 @@ const axios = require("axios"); // compiler server
 const updateUserStats = require("../utils/updateUserStats");
 
 const submitCode = async (req, res) => {
+  const COMPILER_URI = process.env.COMPILER_URI;
   try {
     const { id } = req.params; // problem id
     const { code, language } = req.body;
@@ -127,7 +128,7 @@ const submitCode = async (req, res) => {
     // ---------- Helper to Run One Test ----------
     const runTest = async (testInput) => {
       try {
-        const response = await axios.post("http://localhost:4000/run", {
+        const response = await axios.post(`${ COMPILER_URI }/run`, {
           code,
           language,
           input: testInput,
