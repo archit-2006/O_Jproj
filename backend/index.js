@@ -18,7 +18,7 @@ DBConnection();
 app.use("/assets/avatar", express.static(path.join("assets", "avatars")));
 
 app.use(cors({
-  origin: `${FRONTEND_URI}`, // Vite dev server
+  origin: `${FRONTEND_URI}`, 
   credentials: true               // if sending cookies/token
 }));
 

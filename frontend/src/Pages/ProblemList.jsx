@@ -6,7 +6,8 @@ import { jwtDecode } from "jwt-decode"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { AlertCircle } from "lucide-react"
+import { AlertCircle,Trash2 } from "lucide-react"
+import toast, { Toaster } from "react-hot-toast"
 
 export default function ProblemList() {
   const [problems, setProblems] = useState([])
@@ -44,6 +45,7 @@ export default function ProblemList() {
         setAllTags(tags)
       } catch (error) {
         console.error(error)
+        toast.error("Error fetching problems")
       }
     }
     fetchProblems()
@@ -61,9 +63,10 @@ export default function ProblemList() {
       })
       if (!res.ok) throw new Error("Failed to delete problem")
       setProblems((prev) => prev.filter((p) => p._id !== id))
+      toast.success("Problem deleted successfully")
     } catch (error) {
       console.error(error)
-      alert("Error deleting problem")
+      toast.error("Error deleting problem")
     }
   }
 
@@ -80,7 +83,6 @@ export default function ProblemList() {
     tag.toLowerCase().includes(tagSearch.toLowerCase())
   )
 
-  // Map difficulty -> color styles
   const difficultyColors = {
     Easy: "bg-green-100 text-green-700",
     Medium: "bg-yellow-100 text-yellow-700",
@@ -89,6 +91,9 @@ export default function ProblemList() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
+      {/* Toast Notifications */}
+      <Toaster position="top-right" reverseOrder={false} />
+
       {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-tight">Problem List</h1>
@@ -166,13 +171,41 @@ export default function ProblemList() {
                 </span>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 mb-3">
                   {problem.tags?.map((tag, i) => (
                     <Badge key={i} variant="secondary">
                       {tag}
                     </Badge>
                   ))}
                 </div>
+
+                {role === "admin" && (
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        navigate(`/problems/edit/${problem._id}`)
+                      }}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                        className="bg-red-400 hover:bg-red-600 text-white"
+
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleDelete(problem._id)
+                      }}
+                    >  <Trash2 size={16} />
+
+                      
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))}

@@ -22,11 +22,7 @@ int main() {
     return 0;
 }`,
     python: `print("Hello World!")`,
-    java: `public class Main {
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
-    }
-}`,
+    
   };
 
   const [language, setLanguage] = useState("cpp");
@@ -53,7 +49,7 @@ int main() {
     fetchProblem();
   }, [id]);
 
-  // ✅ Language change
+  // Language change
   const handleLanguageChange = (e) => {
     const lang = e.target.value;
     setLanguage(lang);
@@ -215,7 +211,6 @@ int main() {
           >
             <option value="cpp">C++</option>
             <option value="python">Python</option>
-            <option value="java">Java</option>
           </select>
         </div>
 

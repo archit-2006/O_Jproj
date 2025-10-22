@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import { useEffect, useState } from "react";
+
 
 import Home from "./Pages/Home";
 import Login from "./Pages/Log-in";
@@ -13,9 +15,35 @@ import SubmissionsPage from "./Pages/SubmissionPage";
 import ProfilePage from "./Pages/Profile"
 
 function App() {
+  const [user, setUser] = useState(null);
+
+  // useEffect(() => {
+  //   const verifyToken = async () => {
+  //     const token = localStorage.getItem("token");
+  //     if (!token) {
+  //       setUser(null);
+  //       return;
+  //     }
+
+  //     try {
+  //       const res = await axios.get("/api/auth/verify", {
+  //         headers: { Authorization: `Bearer ${token}` },
+  //       });
+  //       // ✅ Token valid
+  //       setUser(res.data.user);
+  //     } catch (err) {
+  //       console.error("Token invalid or expired:", err.response?.data || err.message);
+  //       localStorage.removeItem("token");
+  //       setUser(null);
+  //     }
+  //   };
+
+  //   verifyToken();
+  // }, []);
+
   return (
     <BrowserRouter>
-    
+
       <Navbar />
       <main className="p-4">
         <Routes>

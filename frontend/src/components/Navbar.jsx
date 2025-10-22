@@ -33,7 +33,7 @@ export default function Navbar() {
         setUsername(res.data.userhandle || "");
         setUserAvatarUrl(
           res.data.avatar
-            ? `http://localhost:${PORT}${res.data.avatar}`
+            ? res.data.avatar
             : `http://localhost:${PORT}/assets/avatar/default.png`
         );
       } catch (err) {
@@ -62,7 +62,7 @@ export default function Navbar() {
             to="/"
             className="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400 hover:opacity-80 transition"
           >
-            OJ Platform
+            codingfarm
           </Link>
 
           {/* Desktop Nav */}

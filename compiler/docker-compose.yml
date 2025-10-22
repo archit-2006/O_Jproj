@@ -1,0 +1,9 @@
+
+services:
+  app:
+    image: ojcompiler:latest   # <-- Replace with your image name
+    env_file:
+      - .env
+    ports:
+      - "${PORT}:4000"              # Host port mapped to container port
+    restart: unless-stopped

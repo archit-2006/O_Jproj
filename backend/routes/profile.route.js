@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { getProfile, updateProfile,updateAvatar,updateBio } = require("../controllers/profile.controller");
 const  verifyToken  = require("../middleware/jwtVerify");
-const {upload} = require("../middleware/upload");
+const upload = require("../middleware/upload");
+// console.log("Upload import:", upload);
 
 // Profile routes
 router.get("/profile", verifyToken, getProfile);

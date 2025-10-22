@@ -97,7 +97,7 @@ export default function Profile() {
             <img
               src={
                 user?.avatar
-                  ? `http://localhost:${PORT}${user.avatar}`
+                  ? user.avatar
                   : `http://localhost:${PORT}/assets/avatar/default.png`
               }
               alt="avatar"

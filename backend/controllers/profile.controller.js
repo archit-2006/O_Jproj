@@ -1,4 +1,6 @@
 const User = require("../models/User");
+const cloudinary = require("../config/cloudinary");
+
 
 // Get logged-in user's profile
 const getProfile = async (req, res) => {
@@ -65,20 +67,32 @@ const updateAvatar = async (req, res) => {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    const avatarUrl =  `/assets/avatar/${req.file.filename}`;
+    // Upload to Cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "avatars", // optional folder name
+      public_id: `${req.user.id}_avatar`, // optional unique id
+      resource_type: "image",
+      overwrite: true,
+    });
 
+    // Save Cloudinary URL to user profile
     const user = await User.findByIdAndUpdate(
       req.user.id,
-      { avatar: avatarUrl },
+      { avatar: result.secure_url },
       { new: true }
     );
 
-    res.json(user);
+    res.json({
+      message: "Avatar updated successfully",
+      avatarUrl: result.secure_url,
+      user,
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
+    console.error("Cloudinary upload error:", err);
+    res.status(500).json({ message: "Server error during avatar upload" });
   }
 };
+
 const updateBio = async (req, res) => {
   try {
     const { bio } = req.body;
