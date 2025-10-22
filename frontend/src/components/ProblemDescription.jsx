@@ -15,7 +15,7 @@ export default function ProblemDescription() {
         setLoading(true);
         setError(null);
         console.log(`id is ${id}`);
-        const API_BASE = `http://localhost:${PORT}`; // Change here if your backend URL changes
+        const API_BASE = import.meta.env.VITE_API_ROOT_URL; // Change here if your backend URL changes
         const { data } = await axios.get(`${API_BASE}/api/problems/${id}`);
 
         setProblem(data);
