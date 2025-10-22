@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ProblemDescription from "../components/ProblemDescription";
 import CodeEditor from "../components/CodeEditor";
-import CustomInputBox from "../components/CustomInputBox";
+import CustomInputBox from "../components/customInputBox";
 import ReactMarkdown from "react-markdown";
 import { ArrowLeft } from "lucide-react";
 
