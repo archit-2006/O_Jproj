@@ -68,7 +68,7 @@ exports.validateUser = async (req, res,next) => {
       { id: validUser._id, email ,role: validUser.role},
       process.env.SECRET_KEY,
       {
-        expiresIn: "1h",
+        expiresIn: "2d",
       }
     );
     
