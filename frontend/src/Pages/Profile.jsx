@@ -9,6 +9,7 @@ export default function Profile() {
   const [bio, setBio] = useState("");
   const BACKEND_URL = import.meta.env.VITE_API_URL;
   const PORT = import.meta.env.VITE_API_PORT;
+  const DEFAULT_AVATAR = import.meta.env.VITE_DEFAULT_AVATAR;
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -48,25 +49,25 @@ export default function Profile() {
     }
   };
 
- const handleBioUpdate = async () => {
-  try {
-    const token = localStorage.getItem("token");
-    const res = await axios.put(
-      `${BACKEND_URL}/bio`,
-      { bio },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+  const handleBioUpdate = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.put(
+        `${BACKEND_URL}/bio`,
+        { bio },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-    // 👇 correctly update only user object
-    setUser(res.data.user); 
-    setBio(res.data.user.bio); 
-    setEditingBio(false);
-  } catch (err) {
-    console.error(err.response?.data || err.message);
-  }
-};
+      // 👇 correctly update only user object
+      setUser(res.data.user);
+      setBio(res.data.user.bio);
+      setEditingBio(false);
+    } catch (err) {
+      console.error(err.response?.data || err.message);
+    }
+  };
 
 
   if (!user) {
@@ -95,14 +96,12 @@ export default function Profile() {
         <div className="flex flex-col sm:flex-row items-center sm:items-start sm:space-x-8 mb-10">
           <div className="relative w-32 h-32">
             <img
-              src={
-                user?.avatar
-                  ? user.avatar
-                  : `http://localhost:${PORT}/assets/avatar/default.png`
-              }
-              alt="avatar"
-              className="w-32 h-32 rounded-full border-4 border-blue-500 shadow-md object-cover"
+              src={user?.avatar || DEFAULT_AVATAR}
+              onError={(e) => (e.target.src = DEFAULT_AVATAR)}
+              alt="User Avatar"
+            className="w-32 h-32 rounded-full border-4 border-blue-500 shadow-md object-cover"
             />
+
             <input
               id="avatar-upload"
               type="file"

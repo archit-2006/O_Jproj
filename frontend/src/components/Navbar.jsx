@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { Menu } from "lucide-react";
 import {
   DropdownMenu,
@@ -20,23 +20,20 @@ export default function Navbar() {
 
   const BACKEND_URL = import.meta.env.VITE_API_URL;
   const PORT = import.meta.env.VITE_API_PORT;
+  const DEFAULT_AVATAR = import.meta.env.VITE_DEFAULT_AVATAR;
 
   useEffect(() => {
     const fetchProfile = async () => {
       if (!token) return; // no need to fetch if not logged in
       setLoading(true);
       try {
-        const res = await axios.get(`${BACKEND_URL}/profile`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+      const res = await axios.get(`${BACKEND_URL}/profile`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-        setUsername(res.data.userhandle || "");
-        setUserAvatarUrl(
-          res.data.avatar
-            ? res.data.avatar
-            : `http://localhost:${PORT}/assets/avatar/default.png`
-        );
-      } catch (err) {
+      setUsername(res.data.userhandle || "");
+      setUserAvatarUrl(res.data.avatar?.trim() || DEFAULT_AVATAR);
+    } catch (err) {
         console.error(err.response?.data || err.message);
       } finally {
         setLoading(false);
@@ -106,16 +103,17 @@ export default function Navbar() {
                     className="rounded-full w-10 h-10 p-0"
                   >
                     <Avatar className="w-10 h-10">
-                      {!loading ? (
+                      {!loading && (
                         <AvatarImage
-                          src={userAvatarUrl}
+                          src={userAvatarUrl || DEFAULT_AVATAR}
                           alt={username || "User"}
                         />
-                      ) : null}
+                      )}
                       <AvatarFallback>
                         {username ? username.charAt(0).toUpperCase() : "U"}
                       </AvatarFallback>
                     </Avatar>
+
                   </Button>
                 </DropdownMenuTrigger>
 
