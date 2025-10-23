@@ -223,12 +223,12 @@ export default function CreateProblem() {
     setSampleTestCases([...sampleTestCases, { input: "", output: "" }]);
   const addJudge = () =>
     setJudgeTestCases([...judgeTestCases, { input: "", output: "" }]);
-
+  const BACKEND_URL = import.meta.env.VITE_API_URL;
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/problems", {
+      const res = await fetch(`${BACKEND_URL}/problems/${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
