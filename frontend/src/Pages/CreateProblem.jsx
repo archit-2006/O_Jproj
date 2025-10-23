@@ -223,7 +223,7 @@ export default function CreateProblem() {
     setSampleTestCases([...sampleTestCases, { input: "", output: "" }]);
   const addJudge = () =>
     setJudgeTestCases([...judgeTestCases, { input: "", output: "" }]);
-  BACKEND_URL = import.meta.env.VITE_API_URL;
+  const BACKEND_URL = import.meta.env.VITE_API_URL;
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
