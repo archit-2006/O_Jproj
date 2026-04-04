@@ -108,9 +108,9 @@ export default function Login() {
 
         {/* Links */}
         <div className="flex justify-between items-center mt-3 text-sm text-gray-600">
-          <a href="#" className="hover:text-blue-600">
+          {/* <a href="#" className="hover:text-blue-600">
             Forgot password?
-          </a>
+          </a> */}
           <a href="/register" className="hover:text-blue-600">
             Sign up
           </a>

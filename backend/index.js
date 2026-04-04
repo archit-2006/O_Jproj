@@ -8,6 +8,8 @@ const submissionRoutes = require("./routes/submission.route");
 const runRoutes = require("./routes/run.route");
 const aiRoutes = require("./routes/ai.routes");
 const profileRoutes = require("./routes/profile.route");
+const discussionRoutes = require("./routes/discussion.route");
+const commentRoutes = require("./routes/comment.route");
 const path = require("path");
 const cors = require('cors');
 const FRONTEND_URI=process.env.FRONTEND_URI
@@ -43,6 +45,9 @@ app.use("/api", submissionRoutes);
 
 app.use("/api/ai", aiRoutes);
 
+app.use("/api/discussions", discussionRoutes);
+
+app.use("/api/comments", commentRoutes);
 
 // Start server
 const PORT = process.env.PORT || 5000;

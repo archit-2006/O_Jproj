@@ -12,6 +12,8 @@ const userSchema = new mongoose.Schema(
     role: { type: String, default: "user" },
     avatar: { type: String, default: "/assets/avatar/default.png" }, // profile picture url
     bio: { type: String, default: "" }, // short intro
+    reputation: { type: Number, default: 0 },
+
 
     // Stats info
     stats: {
