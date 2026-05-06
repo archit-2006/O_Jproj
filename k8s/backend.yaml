@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oj-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oj-backend
+  template:
+    metadata:
+      labels:
+        app: oj-backend
+    spec:
+      containers:
+      - name: oj-backend
+        image: oj-backend:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5000
+
+        env:
+        - name: MONGODB_URL
+          value: "mongodb+srv://architutsahi:gbuB8LeOxwuRMTI2@auth-oj.fzgfgi1.mongodb.net/?retryWrites=true&w=majority&appName=Auth-OJ"
+
+        - name: SECRET_KEY
+          value: "mysecretkey123"
+
+        - name: FRONTEND_URI
+          value: "http://13.203.232.136:30080"
+
+        - name: COMPILER_URI
+          value: "http://13.203.232.136:30082"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: oj-backend-service
+spec:
+  type: NodePort
+  selector:
+    app: oj-backend
+
+  ports:
+  - port: 5000
+    targetPort: 5000
+    nodePort: 30081
