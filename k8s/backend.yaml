@@ -27,10 +27,10 @@ spec:
           value: "mysecretkey123"
 
         - name: FRONTEND_URI
-          value: "http://13.203.232.136:30080"
+          value: "http://13.233.100.50:30080"
 
         - name: COMPILER_URI
-          value: "http://13.203.232.136:30082"
+          value: "http://65.2.129.156:4000"
 
 ---
 apiVersion: v1
