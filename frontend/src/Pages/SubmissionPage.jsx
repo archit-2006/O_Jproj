@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-
-
 import {
   Table,
   TableBody,
@@ -12,8 +10,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -26,10 +22,6 @@ export default function SubmissionsPage() {
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState(null);
   const [isValidToken, setIsValidToken] = useState(true);
-
-
-  // VIEW MODAL STATE
-  const [selectedSubmission, setSelectedSubmission] = useState(null);
 
 
   const token = localStorage.getItem("token");
@@ -61,8 +53,6 @@ export default function SubmissionsPage() {
         const res = await axios.get(`${API}/submissions/${userId}?limit=10`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
-
         setSubmissions(res.data);
       } catch (error) {
         console.error("Error fetching submissions:", error);
@@ -80,14 +70,10 @@ export default function SubmissionsPage() {
   const handleCopy = async (code, id) => {
     try {
       await navigator.clipboard.writeText(code);
-
-
       setCopiedId(id);
-
-
       setTimeout(() => setCopiedId(null), 2000);
     } catch (err) {
-      console.error("Failed to copy:", err);
+      console.error("Failed to copy: ", err);
     }
   };
 
@@ -102,9 +88,7 @@ export default function SubmissionsPage() {
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
-      <h1 className="text-3xl font-bold text-gray-800">
-        📜 My Submissions
-      </h1>
+      <h1 className="text-3xl font-bold text-gray-800">📜 My Submissions</h1>
 
 
       {!isValidToken ? (
@@ -112,16 +96,10 @@ export default function SubmissionsPage() {
           <p className="text-red-500 font-medium mb-4">
             ⚠️ Please login to see submissions.
           </p>
-
-
-          <Button onClick={() => navigate("/login")}>
-            🔑 Login
-          </Button>
+          <Button onClick={() => navigate("/login")}>🔑 Login</Button>
         </div>
       ) : submissions.length === 0 ? (
-        <p className="text-gray-500 text-center">
-          No submissions yet.
-        </p>
+        <p className="text-gray-500 text-center">No submissions yet.</p>
       ) : (
         <div className="overflow-x-auto bg-white rounded-xl shadow-md">
           <Table>
@@ -135,29 +113,14 @@ export default function SubmissionsPage() {
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
-
-
             <TableBody>
               {submissions.map((sub, idx) => (
-                <TableRow
-                  key={sub._id}
-                  className="hover:bg-gray-50"
-                >
+                <TableRow key={sub._id} className="hover:bg-gray-50">
                   <TableCell>{idx + 1}</TableCell>
-
-
+                  <TableCell>{sub.problemId?.title || "Unknown"}</TableCell>
                   <TableCell>
-                    {sub.problemId?.title || "Unknown"}
+                    <Badge variant="secondary">{sub.language}</Badge>
                   </TableCell>
-
-
-                  <TableCell>
-                    <Badge variant="secondary">
-                      {sub.language}
-                    </Badge>
-                  </TableCell>
-
-
                   <TableCell>
                     <Badge
                       variant={
@@ -171,35 +134,16 @@ export default function SubmissionsPage() {
                       {sub.verdict}
                     </Badge>
                   </TableCell>
-
-
                   <TableCell>
                     {new Date(sub.createdAt).toLocaleString()}
                   </TableCell>
-
-
-                  <TableCell className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() =>
-                        setSelectedSubmission(sub)
-                      }
-                    >
-                      👁 View
-                    </Button>
-
-
+                  <TableCell>
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() =>
-                        handleCopy(sub.code, sub._id)
-                      }
+                      onClick={() => handleCopy(sub.code, sub._id)}
                     >
-                      {copiedId === sub._id
-                        ? "✅ Copied!"
-                        : "📋 Copy"}
+                      {copiedId === sub._id ? "✅ Copied!" : "📋 Copy Code"}
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -208,29 +152,10 @@ export default function SubmissionsPage() {
           </Table>
         </div>
       )}
-
-
-      {/* VIEW CODE MODAL */}
-      {selectedSubmission && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-4 max-w-3xl w-full mx-4 relative shadow-xl">
-
-
-            <button
-              onClick={() => setSelectedSubmission(null)}
-              className="absolute top-2 right-3 text-xl font-bold"
-            >
-              ✖
-            </button>
-
-
-            <pre className="bg-black text-green-400 p-4 rounded-lg overflow-x-auto text-sm max-h-[70vh] overflow-y-auto">
-              <code>{selectedSubmission?.code}</code>
-            </pre>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
+
+
+
 
