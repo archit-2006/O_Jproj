@@ -1,10 +1,10 @@
-import axios from "axios";
+const axios = require("axios");
 
 const COMPILER_URI = process.env.COMPILER_URI ; 
 // 👆 change to your compiler server’s URL
 
 // ✅ Get AI Suggestion (before/during solving)
-export const aiSuggestion = async (req, res, next) => {
+const aiSuggestion = async (req, res, next) => {
   try {
     const { problem, code } = req.body;
 
@@ -20,7 +20,7 @@ export const aiSuggestion = async (req, res, next) => {
 };
 
 // ✅ Get AI Review (after run/submit)
-export const aiReview = async (req, res, next) => {
+const aiReview = async (req, res, next) => {
   try {
     const { problem,verdict,message, code } = req.body;
 
@@ -30,9 +30,14 @@ export const aiReview = async (req, res, next) => {
       verdict,
       message,
     });
-
+     console.log("AI Review Response:", response.data); // Debug log
     res.json(response.data);
   } catch (err) {
     next(err);
   }
+};
+
+module.exports = {
+  aiSuggestion,
+  aiReview,
 };

@@ -15,7 +15,7 @@
 # Use lightweight Node.js base image
 FROM node:24-alpine
 
-# Set working directory inside container
+# Set working directory insidMOe container
 WORKDIR /compiler_backend
 
 # Copy only package.json + package-lock.json first

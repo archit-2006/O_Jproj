@@ -6,3 +6,4 @@ outputs
 package-lock.json
 components.json
 keys
+uploads

@@ -62,13 +62,12 @@ app.post("/ai-review",async (req,res)=>  {
       message: aiReview 
 
     });
-  } catch (error){
-    console.error("Error getting ai-review:", error.message);
-    return res.status(500).json({ 
-      success:false,
-      error:  error.message || error.toString() || "Error occured while executing ai-review" 
-    });
-  }
+  } catch (err) {
+  console.error(err);
+  console.error(err.message);
+  console.error(err.stack);
+  throw err;
+}
 });
 
 const PORT = process.env.PORT;
