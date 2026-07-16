@@ -33,8 +33,12 @@ export default function Navbar() {
 
       setUsername(res.data.userhandle || "");
       setUserAvatarUrl(res.data.avatar?.trim() || DEFAULT_AVATAR);
-    } catch (err) {
+      } catch (err) {
         console.error(err.response?.data || err.message);
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          localStorage.removeItem("token");
+          window.location.reload();
+        }
       } finally {
         setLoading(false);
       }

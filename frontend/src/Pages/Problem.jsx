@@ -27,8 +27,13 @@ int main() {
     python: `print("Hello World!")`,
   };
 
-  const [language, setLanguage] = useState("cpp");
-  const [code, setCode] = useState(starterCodes.cpp);
+  const [language, setLanguage] = useState(() => {
+    return id ? (localStorage.getItem(`lang_${id}`) || "cpp") : "cpp";
+  });
+  const [code, setCode] = useState(() => {
+    const savedLang = id ? (localStorage.getItem(`lang_${id}`) || "cpp") : "cpp";
+    return id ? (localStorage.getItem(`code_${id}_${savedLang}`) || starterCodes[savedLang]) : starterCodes[savedLang];
+  });
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [useCustomInput, setUseCustomInput] = useState(false);
@@ -54,11 +59,40 @@ int main() {
     fetchProblem();
   }, [id]);
 
+  /* ---------- Sync local storage changes on problem ID switch ---------- */
+  useEffect(() => {
+    if (!id) return;
+    const savedLang = localStorage.getItem(`lang_${id}`) || "cpp";
+    setLanguage(savedLang);
+    const savedCode = localStorage.getItem(`code_${id}_${savedLang}`);
+    if (savedCode !== null) {
+      setCode(savedCode);
+    } else {
+      setCode(starterCodes[savedLang] || "");
+    }
+  }, [id]);
+
+  /* ---------- Auto-save draft code to local storage ---------- */
+  useEffect(() => {
+    if (!id || !language) return;
+    localStorage.setItem(`code_${id}_${language}`, code);
+  }, [id, language, code]);
+
   /* ---------- Language Change ---------- */
   const handleLanguageChange = (e) => {
     const lang = e.target.value;
     setLanguage(lang);
-    setCode(starterCodes[lang]);
+    if (id) {
+      localStorage.setItem(`lang_${id}`, lang);
+      const savedCode = localStorage.getItem(`code_${id}_${lang}`);
+      if (savedCode !== null) {
+        setCode(savedCode);
+      } else {
+        setCode(starterCodes[lang] || "");
+      }
+    } else {
+      setCode(starterCodes[lang] || "");
+    }
   };
 
   /* ---------- Run ---------- */
